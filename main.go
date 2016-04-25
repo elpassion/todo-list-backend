@@ -6,6 +6,7 @@ import (
     "net/http"
 
     "github.com/gorilla/mux"
+    "encoding/json"
 )
 
 func main() {
@@ -22,7 +23,12 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintln(w, "Todo Index!")
+    todos := Todos{
+        Todo{Name: "Write presentation"},
+        Todo{Name: "Host meetup"},
+    }
+
+    json.NewEncoder(w).Encode(todos)
 }
 
 func TodoShow(w http.ResponseWriter, r *http.Request) {
