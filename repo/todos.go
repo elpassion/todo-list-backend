@@ -1,35 +1,42 @@
-package main
+package repo
 
-import "fmt"
+import (
+    "github.com/wojciechko/walletudo-backend/model"
+    "fmt"
+)
 
 var currentId int
 
-var todos Todos
+var todos model.Todos
 
 // Give us some seed data
 func init() {
-    RepoCreateTodo(Todo{Name: "Write presentation"})
-    RepoCreateTodo(Todo{Name: "Host meetup"})
+    CreateTodo(model.Todo{Name: "Write presentation"})
+    CreateTodo(model.Todo{Name: "Host meetup"})
 }
 
-func RepoFindTodo(id int) Todo {
+func AllTodo() model.Todos {
+    return todos
+}
+
+func FindTodo(id int) model.Todo {
     for _, t := range todos {
         if t.Id == id {
             return t
         }
     }
     // return empty Todo if not found
-    return Todo{}
+    return model.Todo{}
 }
 
-func RepoCreateTodo(t Todo) Todo {
+func CreateTodo(t model.Todo) model.Todo {
     currentId += 1
     t.Id = currentId
     todos = append(todos, t)
     return t
 }
 
-func RepoDestroyTodo(id int) error {
+func DestroyTodo(id int) error {
     for i, t := range todos {
         if t.Id == id {
             todos = append(todos[:i], todos[i+1:]...)
