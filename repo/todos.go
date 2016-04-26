@@ -27,7 +27,7 @@ func AllTodos() ([]Todo, error) {
     return todos, err
 }
 
-func FindTodo(id int) (Todo, error) {
+func FindTodo(id int64) (Todo, error) {
     findTodo := "SELECT * FROM todos WHERE id=$1"
     todo := Todo{}
     err = db.Get(&todo, findTodo, id)
@@ -40,7 +40,7 @@ func CreateTodo(todo *Todo) error {
     return err
 }
 
-func DeleteTodo(todoId int) error {
+func DeleteTodo(todoId int64) error {
     deleteTodo := "DELETE FROM todos WHERE id=$1 RETURNING id"
     var id int64
     err := db.QueryRow(deleteTodo, todoId).Scan(&id)

@@ -20,7 +20,7 @@ func Todos(writer rest.ResponseWriter, request *rest.Request) {
 }
 
 func FindTodo(writer rest.ResponseWriter, request *rest.Request) {
-    todoId, err := strconv.Atoi(request.PathParam("todoId"))
+    todoId, err := strconv.ParseInt(request.PathParam("todoId"), 10, 64)
     if err != nil {
         rest.Error(writer, "Invalid :todoId path param", http.StatusBadRequest)
         return
@@ -49,13 +49,13 @@ func CreateTodo(writer rest.ResponseWriter, request *rest.Request) {
     }
     err = repo.CreateTodo(&todo)
     if err != nil {
-        rest.Error(writer, "Can't write to database", http.StatusInternalServerError)
+        rest.Error(writer, err.Error(), http.StatusInternalServerError)
     }
     writer.WriteJson(todo)
 }
 
 func DeleteTodo(writer rest.ResponseWriter, request *rest.Request) {
-    todoId, err := strconv.Atoi(request.PathParam("todoId"))
+    todoId, err := strconv.ParseInt(request.PathParam("todoId"), 10, 64)
     if err != nil {
         rest.Error(writer, "Invalid :todoId path param", http.StatusBadRequest)
         return
