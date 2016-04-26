@@ -67,3 +67,31 @@ func DeleteTodo(writer rest.ResponseWriter, request *rest.Request) {
     }
     writer.WriteHeader(http.StatusOK)
 }
+
+func UpdateTodo(writer rest.ResponseWriter, request *rest.Request) {
+    todoId, err := strconv.ParseInt(request.PathParam("todoId"), 10, 64)
+    if err != nil {
+        rest.Error(writer, "Invalid :todoId path param", http.StatusBadRequest)
+        return
+    }
+    todo, err := repo.FindTodo(todoId)
+    if err != nil {
+        rest.NotFound(writer, request)
+        return
+    }
+
+    err = request.DecodeJsonPayload(&todo)
+    if err != nil {
+        rest.Error(writer, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    todo.Id = todoId
+    todo, err = repo.UpdateTodo(&todo)
+    if err != nil {
+        rest.Error(writer, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    writer.WriteJson(todo)
+}

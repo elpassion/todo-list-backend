@@ -46,3 +46,12 @@ func DeleteTodo(todoId int64) error {
     err := db.QueryRow(deleteTodo, todoId).Scan(&id)
     return err
 }
+
+func UpdateTodo(todo *Todo) (Todo, error) {
+    updateTodo := "UPDATE todos SET name=$2, completed=$3, due=$4 WHERE id=$1"
+    _, err := db.Exec(updateTodo, todo.Id, todo.Name, todo.Completed, todo.Due)
+    if err != nil {
+        return *todo, err
+    }
+    return FindTodo(todo.Id)
+}

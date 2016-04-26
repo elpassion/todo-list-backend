@@ -20,6 +20,7 @@ func router() rest.App {
         &rest.Route{"GET", "/todos/:todoId", api.FindTodo},
         &rest.Route{"POST", "/todos", api.CreateTodo},
         &rest.Route{"DELETE", "/todos/:todoId", api.DeleteTodo},
+        &rest.Route{"PUT", "/todos/:todoId", api.UpdateTodo},
     )
     if err != nil {
         log.Fatalln(err)
