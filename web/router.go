@@ -1,24 +1,28 @@
 package web
 
 import (
+    "github.com/wojciechko/walletudo-backend/web/api"
+    "github.com/ant0ine/go-json-rest/rest"
     "net/http"
-
-    "github.com/gorilla/mux"
+    "log"
 )
 
-func NewRouter() *mux.Router {
-    router := mux.NewRouter().StrictSlash(true)
-    for _, route := range routes {
-        var handler http.Handler
-        handler = route.HandlerFunc
-        handler = Logger(handler, route.Name)
+func Router() http.Handler {
+    api := rest.NewApi()
+    api.Use(rest.DefaultDevStack...)
+    api.SetApp(router())
+    return api.MakeHandler()
+}
 
-        router.
-            Methods(route.Method).
-            Path(route.Pattern).
-            Name(route.Name).
-            Handler(handler)
-
+func router() rest.App {
+    router, err := rest.MakeRouter(
+        &rest.Route{"GET", "/todos", api.Todos},
+        &rest.Route{"GET", "/todos/:todoId", api.FindTodo},
+        &rest.Route{"POST", "/todos", api.CreateTodo},
+        &rest.Route{"DELETE", "/todos/:todoId", api.DeleteTodo},
+    )
+    if err != nil {
+        log.Fatalln(err)
     }
     return router
 }

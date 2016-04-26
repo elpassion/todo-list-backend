@@ -8,6 +8,5 @@ import (
 )
 
 func main() {
-    router := web.NewRouter()
-    log.Fatal(http.ListenAndServe(":3001", router))
+    log.Fatal(http.ListenAndServe(":3001", web.Router()))
 }

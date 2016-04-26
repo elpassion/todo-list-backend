@@ -1,47 +1,48 @@
 package repo
 
 import (
-    "github.com/wojciechko/walletudo-backend/model"
-    "fmt"
+    _ "github.com/lib/pq"
+    "time"
 )
 
-var currentId int
+var TodoTableSchema = `
+CREATE TABLE todos (
+    id serial,
+    name text,
+    completed boolean,
+    due timestamp
+);`
 
-var todos model.Todos
-
-// Give us some seed data
-func init() {
-    CreateTodo(model.Todo{Name: "Write presentation"})
-    CreateTodo(model.Todo{Name: "Host meetup"})
+type Todo struct {
+    Id        int64     `json:"id"`
+    Name      string    `json:"name"`
+    Completed bool      `json:"completed"`
+    Due       time.Time `json:"due"`
 }
 
-func AllTodo() model.Todos {
-    return todos
+func AllTodos() ([]Todo, error) {
+    allTodos := "SELECT * FROM todos ORDER BY name ASC"
+    todos := []Todo{}
+    err := database().Select(&todos, allTodos)
+    return todos, err
 }
 
-func FindTodo(id int) model.Todo {
-    for _, t := range todos {
-        if t.Id == id {
-            return t
-        }
-    }
-    // return empty Todo if not found
-    return model.Todo{}
+func FindTodo(id int) (Todo, error) {
+    findTodo := "SELECT * FROM todos WHERE id=$1"
+    todo := Todo{}
+    err = db.Get(&todo, findTodo, id)
+    return todo, err
 }
 
-func CreateTodo(t model.Todo) model.Todo {
-    currentId += 1
-    t.Id = currentId
-    todos = append(todos, t)
-    return t
+func CreateTodo(todo *Todo) error {
+    createTodo := "INSERT INTO todos (name, completed, due) VALUES($1, $2, $3) RETURNING id"
+    err := db.QueryRow(createTodo, todo.Name, todo.Completed, todo.Due).Scan(&todo.Id)
+    return err
 }
 
-func DestroyTodo(id int) error {
-    for i, t := range todos {
-        if t.Id == id {
-            todos = append(todos[:i], todos[i+1:]...)
-            return nil
-        }
-    }
-    return fmt.Errorf("Could not find Todo with id of %d to delete", id)
+func DeleteTodo(todoId int) error {
+    deleteTodo := "DELETE FROM todos WHERE id=$1 RETURNING id"
+    var id int64
+    err := db.QueryRow(deleteTodo, todoId).Scan(&id)
+    return err
 }
