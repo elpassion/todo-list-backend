@@ -1,7 +1,7 @@
 package api
 
 import (
-    "github.com/wojciechko/walletudo-backend/repo"
+    "github.com/elpassion/todo-list-backend/repo"
     "github.com/ant0ine/go-json-rest/rest"
     "strconv"
     "net/http"

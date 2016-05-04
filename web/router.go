@@ -1,7 +1,7 @@
 package web
 
 import (
-    "github.com/wojciechko/walletudo-backend/web/api"
+    "github.com/elpassion/todo-list-backend/web/api"
     "github.com/ant0ine/go-json-rest/rest"
     "net/http"
     "log"
